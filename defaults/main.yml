@@ -1,10 +1,11 @@
+---
 ophidia_repository: http://ophidia/rpms
 ophidia_version: 1.6.0-1
 ophidia_db_user: ophidia
-ophidia_db_pwd: p4ss 
+ophidia_db_pwd: p4ss
 ophidia_db_port: 3306
 ophidia_slurm_partition: oph_all
 ophidia_db_name: ophidia_db
 ophidia_dimdb_name: ophidia_dim
 ophidia_server_port: 11732
-mysql_root_password: p4ss 
+mysql_root_password: p4ss

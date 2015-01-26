@@ -1,7 +1,8 @@
+---
 - include: common.yml
 
-- include: slurm.yml 
-  when: ophidia_node_type == 'server' or ophidia_node_type == 'compute'  
+- include: slurm.yml
+  when: ophidia_node_type == 'server' or ophidia_node_type == 'compute'
 
 - include: mysql.yml
   when: ophidia_node_type == 'server' or ophidia_node_type == 'io'
