@@ -1,0 +1,17 @@
+- name: add user for OPHIDIA databases
+  mysql_user: name={{ ophidia_db_user }} host=% password={{ ophidia_db_pwd }} priv=*.*:ALL,GRANT
+  tags: ophidia_io
+
+- name: install Ophidia IO rpm 
+  action: yum name={{ item }} state=present
+  with_items:
+    - "{{ ophidia_repository }}/ophidia-io-node-{{ ophidia_version }}.el6.x86_64.rpm"
+  tags: ophidia_io
+
+- name: copy ophidia plugins
+  action: shell cp /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib64/mysql/plugin/
+  tags: ophidia_io
+
+- name: sql script to init plugins table
+  action: shell mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} mysql <  /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.nopetsc.sql
+  tags: ophidia_io

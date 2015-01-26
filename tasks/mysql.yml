@@ -1,0 +1,46 @@
+- name: Install MySQL
+  action: yum name={{item}}
+  with_items:
+    - MySQL-python
+    - mysql-community-devel
+    - mysql-community-server
+  tags: mysql
+
+- name: Start the mysql services
+  action: service name=mysqld state=started enabled=yes
+  tags: mysql
+
+- name: update mysql root password for all root accounts
+  action: mysql_user name=root host={{ item }} password={{ mysql_root_password }}
+  with_items:
+   - "{{ ansible_hostname }}"
+   - 127.0.0.1
+   - ::1
+   - localhost
+  when: ansible_hostname != 'localhost' 
+  tags: mysql
+
+- name: update mysql root password for all root accounts
+  action: mysql_user name=root host={{ item }} password={{ mysql_root_password }}
+  with_items:
+   - 127.0.0.1
+   - ::1
+   - localhost
+  when: ansible_hostname == 'localhost' 
+  tags: mysql
+
+- name: copy .my.cnf file with root password credentials
+  action: template src=my.cnf.j2 dest=/root/.my.cnf mode=0600
+  tags: mysql
+
+- name: ensure anonymous users are not in the database
+  action: mysql_user name='' host={{ item }} state=absent
+  with_items:
+   - localhost
+   - "{{ ansible_hostname }}"
+  tags: mysql
+
+- name: remove the test database
+  action: mysql_db name=test state=absent
+  tags: mysql
+

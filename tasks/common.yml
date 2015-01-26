@@ -1,0 +1,14 @@
+- name: install epel repo
+  action: yum name=http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm state=present
+
+- name: install mysql repo
+  action: yum name=http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm state=present
+
+- name: install libselinux-python
+  action: yum name=libselinux-python
+
+- include: iptables.yml trusted_hosts={{groups.all}} default_accept=1
+
+- name: configure hosts
+  action: template src=hosts.j2 dest=/etc/hosts owner=root group=root mode=0644
+

@@ -1,0 +1,3 @@
+- name: install nco
+  action: yum name=nco state=present
+  tags: packages

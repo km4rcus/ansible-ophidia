@@ -1,0 +1,19 @@
+- include: common.yml
+
+- include: slurm.yml 
+  when: ophidia_node_type == 'server' or ophidia_node_type == 'compute'  
+
+- include: mysql.yml
+  when: ophidia_node_type == 'server' or ophidia_node_type == 'io'
+
+- include: server.yml
+  when: ophidia_node_type == 'server'
+
+- include: compute.yml
+  when: ophidia_node_type == "compute"
+
+- include: packages.yml
+  when: ophidia_node_type == "compute"
+
+- include: io.yml
+  when: ophidia_node_type == 'io'

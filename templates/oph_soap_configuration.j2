@@ -1,0 +1,6 @@
+SOAP_HOST={{ hostvars[groups['ophidia_server'][0]].ansible_default_ipv4.address }}
+SOAP_PORT={{ ophidia_server_port }}
+SOAP_USERNAME=admin
+SOAP_PASSWORD=abcd
+SOAP_TIMEOUT=60
+SOAP_RECV_TIMEOUT=3600

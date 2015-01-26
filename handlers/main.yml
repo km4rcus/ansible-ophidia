@@ -1,0 +1,11 @@
+- name: restart iptables
+  action: service name=iptables state=restarted
+
+- name: reload exports
+  action: shell exportfs -r
+
+- name: ensure nfs service is running
+  action: name=nfs state=started
+
+- name: restart ophidia server
+  action: service name=oph_server state=restarted

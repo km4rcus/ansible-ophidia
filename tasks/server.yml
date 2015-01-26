@@ -1,0 +1,101 @@
+#
+# Installation and configuration of NFS
+#
+- name: install nfs server
+  action: yum pkg=nfs-utils state=present
+  tags: nfs 
+
+- name: install nfs client
+  action: yum pkg=nfs-utils state=present
+  tags: nfs
+
+- name: nfs service is running
+  action: service name={{item}} state=started
+  with_items:
+   - rpcbind
+   - nfslock
+   - nfs
+  tags: nfs
+
+- name: template nfs export
+  action: template src=exports.j2 dest=/etc/exports owner=root group=root mode=0644
+  notify:
+   - reload exports
+  tags: nfs 
+#
+# Installation and configuration of httpd
+#
+- name: installation of http
+  action: yum name=httpd state=present
+  tags: http
+
+- name: change ServerName
+  action: lineinfile dest=/etc/httpd/conf/httpd.conf regexp=^ServerName line='ServerName {{ hostvars[groups.ophidia_server[0]].ansible_hostname }}'
+  tags: http
+
+- name: start http service
+  action: service name=httpd state=started enabled=yes
+  tags: http
+
+#
+# Installation of OPHIDIA Server rpms
+#
+- name: install ophidia rpms
+  action: yum name="{{ophidia_repository}}/ophidia-server-node-{{ ophidia_version }}.el6.x86_64.rpm" state=present
+  tags: ophidia_server
+
+#
+# Creation of OPHIDIA dbs: ophidiaDB and dimensions. Creation of ophidiadb user
+#
+- name: create database for OPHIDIA
+  action: mysql_db name={{item}} state=present
+  with_items:
+    - "{{ ophidia_db_name }}"
+    - "{{ ophidia_dimdb_name }}"
+  tags: ophidia_server
+
+- name: add user for OPHIDIA databases
+  action: mysql_user name={{ ophidia_db_user }} host=% password={{ ophidia_db_pwd }} priv={{ ophidia_db_name}}.*:ALL,GRANT/{{ ophidia_dimdb_name }}.*:ALL,GRANT
+  tags: ophidia_server
+
+- name: copy ophidiadb configuration file
+  action: template src=ophidiadb.conf.j2 dest=/usr/local/ophidia/oph-server/etc/ophidiadb.conf owner=root group=root mode=0644
+  tags: ophidia_server
+
+- name: copy ophidia server configuration file
+  action: template src=server.conf dest=/usr/local/ophidia/oph-server/etc/server.conf owner=root group=root mode=0644
+  tags: ophidia_server
+
+- name: symbolic link ophidia share
+  action: file src=/usr/local/ophidia/share dest=/var/www/html/ophidia state=link
+  tags: ophidia_server
+
+- name: sql script to init plugins table
+  action: shell mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} ophidiadb <  /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb_v1.6.1-0.sql
+  tags: ophidia_server
+
+- name: add partition
+  action: command mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} -h 127.0.0.1 -e "insert into {{ ophidia_db_name }}.hostpartition (idhostpartition, partitionname) values(1, 'oph_all');" 
+  tags: ophidia_server
+
+- name: add host
+  action: command mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} -h 127.0.0.1 -e "insert into {{ ophidia_db_name }}.host (hostname,cores,memory,status) values('{{ hostvars[item].ansible_hostname }}',1,1024,'up'); set @host_id := last_insert_id(); insert into {{ ophidia_db_name }}.hashost (idhostpartition, idhost) values(1, @host_id); insert into {{ ophidia_db_name }}.dbmsinstance (idhost,login,password,port) values(@host_id,'{{ ophidia_db_user }}','{{ ophidia_db_pwd }}',{{ ophidia_db_port }});"
+  with_items: groups['ophidia_ios']
+  tags: ophidia_server
+
+- name: add ssh key for root
+  action: user name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+  tags: ophidia_server
+
+- name: echo root key
+  action: shell cat /root/.ssh/id_rsa.pub
+  register: root_ssh_key
+  tags: ophidia_server
+
+- name: add root ssh key to authorized keys
+  action: authorized_key user=root key="{{ root_ssh_key.stdout }}"
+  tags: ophidia_server
+
+- name: start ophidia server
+  action: service name=oph_server state=started
+  tags: ophidia_server

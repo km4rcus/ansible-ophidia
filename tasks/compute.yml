@@ -1,0 +1,35 @@
+- name: install nfs client
+  action: yum pkg=nfs-utils state=present
+  tags: ophidia_compute
+
+- name: Ensure rpcbind is running
+  action: service name=rpcbind state=started enabled=yes
+  tags: ophidia_compute
+
+- name: Ensure /usr/local/ophidia/share directory exists
+  action: file path=/usr/local/ophidia/share state=directory
+  tags: ophidia_compute
+
+- name: install mysql devel
+  action: yum name=mysql-community-devel state=latest
+  tags: ophidia_compute
+
+- name: install ophidia rpms
+  action: yum name={{ophidia_repository}}/ophidia-compute-node-{{ ophidia_version }}.el6.x86_64.rpm state=present
+  tags: ophidia_compute
+
+- name: copy oph_configuration file
+  action: template src=oph_configuration.j2 dest=/usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_configuration owner=root group=root mode=0644
+  tags: ophidia_compute
+
+- name: copy oph_dim_configuration file
+  action: template src=oph_dim_configuration.j2 dest=/usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_dim_configuration owner=root group=root mode=0644
+  tags: ophidia_compute
+
+- name: copy oph_soap_configuration file
+  action: template src=oph_soap_configuration.j2 dest=/usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_soap_configuration owner=root group=root mode=0644
+  tags: ophidia_compute
+
+- name: configure /etc/fstab on clients
+  action: mount name=/usr/local/ophidia/share src={{hostvars[groups.ophidia_server[0]].ansible_hostname}}:/usr/local/ophidia/share fstype=nfs opts=rw,sync,nfsvers=3 state=mounted
+  tags: ophidia_compute

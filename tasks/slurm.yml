@@ -1,0 +1,36 @@
+- name: configure hosts
+  action: template src=hosts.j2 dest=/etc/hosts owner=root group=root mode=0644
+  tags: slurm
+
+- name: install munge
+  action: yum name=munge  state=latest
+  tags: slurm
+
+- name: configure munge
+  action: copy src=etc/munge/munge.key dest=/etc/munge/munge.key owner=munge group=munge mode=0400
+  tags: slurm
+
+- name: start munge
+  action: service name=munge state=started enabled=yes
+  tags: slurm
+
+- name: install SLURM
+  action: yum name={{ item }} state=present
+  with_items:
+    - "{{ophidia_repository}}/slurm-plugins-14.11.3-1.el6.x86_64.rpm"
+    - "{{ophidia_repository}}/slurm-14.11.3-1.el6.x86_64.rpm"
+    - "{{ophidia_repository}}/slurm-munge-14.11.3-1.el6.x86_64.rpm"
+  tags: slurm
+
+- name: configure slurm
+  action: template src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
+  tags: slurm
+ 
+- name: ensure directory slurm for log exists
+  action: file path=/var/log/slurm state=directory
+  tags: slurm
+
+- name: start slurm
+  action: service name=slurm state=started enabled=yes
+  tags: slurm
+
