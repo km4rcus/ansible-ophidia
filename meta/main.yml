@@ -2,8 +2,8 @@
 galaxy_info:
   author: "Marco Mancini"
   description: Ansible role to deploy OPHIDIA cluster
-  company: CMCC (Centro Euromediterraneo sui Cambiamenti Climatici)
-  license: license (MIT)
+  company: CMCC
+  license: MIT
   min_ansible_version: 1.4
   platforms:
   - name: EL
