@@ -1,6 +1,6 @@
 127.0.0.1	localhost
 {% for host in groups['all']|sort %}
 {% if host != 'localhost' %}
-{{ hostvars[host].ansible_default_ipv4.address }} {{ hostvars[host].ansible_hostname }}
+{{ hostvars[host].ansible_default_ipv4.address }} {{ hostvars[host].ansible_fqdn }}
 {% endif %}
 {% endfor %}
