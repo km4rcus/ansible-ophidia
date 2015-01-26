@@ -71,7 +71,7 @@
   tags: ophidia_server
 
 - name: sql script to init plugins table
-  action: shell mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} ophidiadb <  /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb_v1.6.1-0.sql
+  action: shell mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} {{ ophidia_db_name }} <  /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb_v1.6.1-0.sql
   tags: ophidia_server
 
 - name: add partition
