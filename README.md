@@ -34,17 +34,17 @@ Example Playbook
  - hosts: ophidia_server
   user: root
   roles:
-    - { role: ophidia, ophidia_node_type: 'server' }
+    - { role: km4rcus.ophidia, ophidia_node_type: 'server' }
 
 - hosts: ophidia_computes
   user: root
   roles:
-    - { role: ophidia, ophidia_node_type: 'compute' }
+    - { role: km4rcus.ophidia, ophidia_node_type: 'compute' }
 
 - hosts: ophidia_ios
   user: root
   roles:
-    - { role: ophidia, ophidia_node_type: 'io' }
+    - { role: km4rcus.ophidia, ophidia_node_type: 'io' }
 
 
 License
