@@ -2,8 +2,9 @@
 galaxy_info:
   author: "Marco Mancini"
   company: CMCC (Centro Euro-Mediterraneo sui Cambiamenti Climatici)
-  license:  
-  min_ansible_version: 
+  license: MIT 
+  min_ansible_version: 1.4
+  version: 0.1
   platforms:
    - name: EL
      versions:
