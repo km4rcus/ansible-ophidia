@@ -25,7 +25,7 @@
 - name: configure slurm
   action: template src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   tags: slurm
- 
+
 - name: ensure directory slurm for log exists
   action: file path=/var/log/slurm state=directory
   tags: slurm

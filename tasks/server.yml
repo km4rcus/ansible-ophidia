@@ -81,6 +81,13 @@
 - name: add host
   action: command mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} -h 127.0.0.1 -e "insert into {{ ophidia_db_name }}.host (hostname,cores,memory,status) values('{{ hostvars[item].ansible_hostname }}',1,1024,'up'); set @host_id := last_insert_id(); insert into {{ ophidia_db_name }}.hashost (idhostpartition, idhost) values(1, @host_id); insert into {{ ophidia_db_name }}.dbmsinstance (idhost,login,password,port) values(@host_id,'{{ ophidia_db_user }}','{{ ophidia_db_pwd }}',{{ ophidia_db_port }});"
   with_items: groups['ophidia_ios']
+  when: groups['ophidia_ios']|length > 0
+  tags: ophidia_server
+
+- name: add host
+  action: command mysql -u {{ ophidia_db_user }} -p{{ ophidia_db_pwd }} -h 127.0.0.1 -e "insert into {{ ophidia_db_name }}.host (hostname,cores,memory,status) values('{{ hostvars[item].ansible_hostname }}',1,1024,'up'); set @host_id := last_insert_id(); insert into {{ ophidia_db_name }}.hashost (idhostpartition, idhost) values(1, @host_id); insert into {{ ophidia_db_name }}.dbmsinstance (idhost,login,password,port) values(@host_id,'{{ ophidia_db_user }}','{{ ophidia_db_pwd }}',{{ ophidia_db_port }});"
+  with_items: groups['ophidia_computes_ios']
+  when: groups['ophidia_computes_ios']|length > 0
   tags: ophidia_server
 
 - name: add ssh key for root

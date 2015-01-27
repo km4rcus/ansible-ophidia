@@ -161,3 +161,7 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 NodeName={{ hostvars[host].ansible_hostname }} State=UNKNOWN
 {% endfor %}
 PartitionName={{ ophidia_slurm_partition }} Nodes={% for host in groups['ophidia_computes'] %}{{ hostvars[host].ansible_hostname }},{%endfor%} MaxTime=INFINITE State=UP Default=YES Shared=NO
+{% for host in groups['ophidia_computes_ios'] %}
+NodeName={{ hostvars[host].ansible_hostname }} State=UNKNOWN
+{% endfor %}
+PartitionName={{ ophidia_slurm_partition }} Nodes={% for host in groups['ophidia_computes_ios'] %}{{ hostvars[host].ansible_hostname }},{%endfor%} MaxTime=INFINITE State=UP Default=YES Shared=NO

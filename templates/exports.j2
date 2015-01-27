@@ -11,3 +11,6 @@
 {% for hosts in groups['ophidia_computes'] %}
 /usr/local/ophidia/share {{ hostvars[hosts].ansible_default_ipv4.address }}(rw,no_subtree_check,no_root_squash,async)
 {% endfor %}
+{% for hosts in groups['ophidia_computes_ios'] %}
+/usr/local/ophidia/share {{ hostvars[hosts].ansible_default_ipv4.address }}(rw,no_subtree_check,no_root_squash,async)
+{% endfor %}
