@@ -8,9 +8,13 @@
 # /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
 # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
 #
+{% if groups['ophidia_computes'] is defined %}
 {% for hosts in groups['ophidia_computes'] %}
 /usr/local/ophidia/share {{ hostvars[hosts].ansible_default_ipv4.address }}(rw,no_subtree_check,no_root_squash,async)
 {% endfor %}
+{% endif %}
+{% if groups['ophidia_computes_ios'] is defined %} 
 {% for hosts in groups['ophidia_computes_ios'] %}
 /usr/local/ophidia/share {{ hostvars[hosts].ansible_default_ipv4.address }}(rw,no_subtree_check,no_root_squash,async)
 {% endfor %}
+{% endif %}

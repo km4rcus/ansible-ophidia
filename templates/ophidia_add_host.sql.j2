@@ -1,0 +1,17 @@
+{% if groups['ophidia_ios'] is defined %}
+{% for hosts in groups['ophidia_ios'] %}
+INSERT INTO host (hostname,cores,memory,status) VALUES('{{ hostvars[hosts].ansible_hostname }}',1,1024,'up');
+SET @HOST_ID := LAST_INSERT_ID();
+INSERT INTO hashost (idhostpartition, idhost) VALUES (1, @HOST_ID);
+INSERT INTO dbmsinstance (idhost,login,password,port) VALUES(@HOST_ID, '{{ ophidia_db_user }}','{{ ophidia_db_pwd }}',{{ ophidia_db_port }});
+{% endfor %}
+{% endif %}
+{% if groups['ophidia_computes_ios'] is defined %}
+{% for hosts in groups['ophidia_computes_ios'] %}
+INSERT INTO host (hostname,cores,memory,status) VALUES('{{ hostvars[hosts].ansible_hostname }}',1,1024,'up');
+SET @HOST_ID := LAST_INSERT_ID();
+INSERT INTO hashost (idhostpartition, idhost) VALUES (1, @HOST_ID);
+INSERT INTO dbmsinstance (idhost,login,password,port) VALUES(@HOST_ID, '{{ ophidia_db_user }}','{{ ophidia_db_pwd }}',{{ ophidia_db_port }});
+{% endfor %}
+{% endif %}
+
