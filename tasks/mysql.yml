@@ -10,15 +10,15 @@
   action: service name=mysqld state=started enabled=yes
   tags: mysql
 
-- name: update mysql root password for all root accounts
-  action: mysql_user name=root host={{ item }} password={{ mysql_root_password }}
-  with_items:
-   - "{{ ansible_hostname }}"
-   - 127.0.0.1
-   - ::1
-   - localhost
-  when: ansible_hostname != 'localhost' 
-  tags: mysql
+#- name: update mysql root password for all root accounts
+#  action: mysql_user name=root host={{ item }} password={{ mysql_root_password }}
+#  with_items:
+#   - "{{ ansible_hostname }}"
+#   - 127.0.0.1
+#   - ::1
+#   - localhost
+#  when: ansible_hostname != 'localhost' 
+#  tags: mysql
 
 - name: update mysql root password for all root accounts
   action: mysql_user name=root host={{ item }} password={{ mysql_root_password }}
@@ -26,7 +26,7 @@
    - 127.0.0.1
    - ::1
    - localhost
-  when: ansible_hostname == 'localhost' 
+#  when: ansible_hostname == 'localhost' 
   tags: mysql
 
 - name: copy .my.cnf file with root password credentials
